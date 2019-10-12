@@ -1,0 +1,95 @@
+{%extends 'blog/header.html'%}
+{% block content %}
+{%if not request.user.is_authenticated or not request.user.id == 1 %}
+{% if messages %}
+<div class="alert alert-success" role="alert">
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3 col-md-3">
+            {% if user.userprofile.image %}
+            <img src="{{user.userprofile.image.url}}" alt="" class="img-rounded img-responsive" />{% endif %}
+        </div>
+        <div class="col-sm-5 col-md-5">
+            <blockquote>
+                <p>{{user.get_full_name}}</p> <small><cite title="Source Title">{{user.userprofile.city}}<i class="glyphicon glyphicon-map-marker"></i></cite></small>
+            </blockquote>
+            <p> <i class="glyphicon glyphicon-envelope"></i> {{user.email}}
+                <br /> <i class="glyphicon glyphicon-globe"></i> {{user.userprofile.company}}
+                <br><i class="glyphicon glyphicon-phone"></i> {{user.userprofile.phone}}
+                <br /> <i class="glyphicon glyphicon-gift"></i> {{user.date_joined}}</p>
+            <hr>
+            <br> <a class="btn btn-primary" href="{% url 'custmize'%}"><i class="glyphicon glyphicon-edit"></i> custmize Profile</a>
+        </div>
+    </div>
+</div>
+{%endif%}
+<h3>{{user.get_full_name}} | Items</h3>
+{%for obj in object_list%}
+<div class="col-sm-3 ">
+    <div class="thumbnail enr">
+        <div>{{massegr}}</div>
+        {% if obj.image %}
+        <img src="{{ obj.image.url }}" class="img-resposive" />
+        {% endif %}
+        <div class="caption">
+            <h3><a href="{{obj.get_absolute_url}}">{{obj.title}}</a></h3><strong><small class="small"> {{obj.date|date:"Y-m-d"}} {{obj.date|timesince}}</small></strong>
+            <p class="clo"><strong><i class="fa - fa-dollar"> {{obj.price}} </i></strong><br></p>
+            <p><strong>{{obj.Type}}</strong></p>
+            <p><a href="{{obj.get_absolute_url}}" class="btn btn-primary" role="button"><i class="fa fa-angle-double-right"> View</i></a>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                    <i class="fa fa-dollar"> Pay</i>
+                </button>
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">select your Pay way</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p> <a type="button" class="btn btn-primary" href="{%url 'Pay'%}">online Pay</a>&nbsp;&nbsp;
+                                    <a type="button" class="btn btn-primary" href="#">Direct connection</a></p>
+                            </div>
+                            <div class="modal-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </p>
+        </div>
+    </div>
+</div>
+{% empty %}
+<h1>this user have no any Posts</h1>
+{% endfor %}
+<div class="clearfix"></div>
+<div class="pagination">
+    <span class="step-links">
+        {% if object_list.has_previous %}
+        <a href="?{{page_var}}={{ object_list.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="current">
+            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+        </span>
+        {% if object_list.has_next %}
+        <a href="?{{page_var}}={{ object_list.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+    <!--end load-->
+    <!-- {%for user in users%} -->
+    <!-- <div class="load"><a href="{%url 'profile_pk' pk=user.pk%}">{{user.username}}</a></div> -->
+    <!--star load-->
+    <!-- {%endfor%} -->
+</div>
+</div>
+</div>
+{% endblock content %}
